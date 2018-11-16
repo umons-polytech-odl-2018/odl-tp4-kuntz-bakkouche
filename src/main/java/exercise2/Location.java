@@ -1,6 +1,8 @@
 package exercise2;
 
-public class Location {
+import java.io.Serializable;
+
+public class Location implements Serializable {
 	private final String local;
 	private final String building;
 
