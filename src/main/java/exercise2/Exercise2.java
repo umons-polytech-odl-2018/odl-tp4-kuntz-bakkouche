@@ -1,21 +1,87 @@
 package exercise2;
 
-import java.io.IOException;
+import javax.swing.*;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 
 public class Exercise2 {
-	public static void save(Classroom classroom, Path filePath) {
+	public static void save(Classroom classroom, Path filePath)
 
+	{
+		JFileChooser choixFichier = new JFileChooser ();
+		int resultat = choixFichier.showSaveDialog(null);
+		if(resultat == JFileChooser.CANCEL_OPTION)
+		{
+			System.out.println("Création du fichier annulée.");
+			return;
+		}
+		File nomFichier = choixFichier.getSelectedFile();
+
+		if(nomFichier == null || nomFichier.getName().equals(""))
+		{
+			System.out.println("Nom de fichier incorrect.");
+			return;
+		}
+
+		try
+		{
+		ObjectOutputStream sortie = new ObjectOutputStream(new FileOutputStream(nomFichier));
+		sortie.writeObject(classroom);
+		sortie.close();
+		}
+		catch(Exception e){ e.printStackTrace(); }
 	}
+
+
 
 	public static Classroom load(Path filePath) {
-		return null;
+		JFileChooser choixFichier = new JFileChooser();
+
+		int resultat = choixFichier.showOpenDialog(null);
+		if (resultat == JFileChooser.CANCEL_OPTION) {
+			System.out.println("Création du fichier annulée.");
+		}
+
+		File nomFichier = choixFichier.getSelectedFile();
+
+		if (nomFichier == null || nomFichier.getName().equals("")) {
+			System.out.println("Nom de fichier incorrect.");
+		}
+
+		ObjectInputStream entree = null;
+		Classroom classroom = null;
+		try {
+			entree = new ObjectInputStream(new FileInputStream(nomFichier));
+			while (true) {
+				classroom = (Classroom) entree.readObject();
+				System.out.println(classroom);
+			}
+		} catch (java.io.EOFException e) {
+			System.out.println("Fin de la lecture du fichier.");
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				entree.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+		}
+		return classroom;
 	}
 
+
+
+
+
 	public static void main(String[] args) throws IOException {
+
+		System.out.println("Bonjour");
+
 		Teacher teacher = new Teacher("Claire", "Barnett",
 			LocalDate.of(1975, 3, 7), new PhoneNumber("+32 65 123 456"),
 			new Location("Ho.23", "Houdain"));
@@ -28,7 +94,11 @@ public class Exercise2 {
 
 		Path filePath = Paths.get("classroom.ser");
 
-		save(classroom, filePath);
+		Classroom classroom2 = load (filePath);
+
+		classroom2.toString();
+
+		System.out.println("Bonjour 2");
 
 		System.out.printf("Classroom saved to %s, size=%d bytes\n", filePath.toString(), Files.size(filePath));
 
