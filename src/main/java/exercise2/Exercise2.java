@@ -9,9 +9,8 @@ import java.time.LocalDate;
 
 public class Exercise2 {
 	public static void save(Classroom classroom, Path filePath)
-
 	{
-		JFileChooser choixFichier = new JFileChooser ();
+		/*JFileChooser choixFichier = new JFileChooser ();
 		int resultat = choixFichier.showSaveDialog(null);
 		if(resultat == JFileChooser.CANCEL_OPTION)
 		{
@@ -32,13 +31,19 @@ public class Exercise2 {
 		sortie.writeObject(classroom);
 		sortie.close();
 		}
+		catch(Exception e){ e.printStackTrace(); }*/
+
+		try{
+		ObjectOutputStream sortie = new ObjectOutputStream( new FileOutputStream(String.valueOf(filePath)));
+		sortie.writeObject(classroom);
+		sortie.close(); }
 		catch(Exception e){ e.printStackTrace(); }
 	}
 
 
 
 	public static Classroom load(Path filePath) {
-		JFileChooser choixFichier = new JFileChooser();
+		/*JFileChooser choixFichier = new JFileChooser();
 
 		int resultat = choixFichier.showOpenDialog(null);
 		if (resultat == JFileChooser.CANCEL_OPTION) {
@@ -71,6 +76,15 @@ public class Exercise2 {
 			}
 
 		}
+		return classroom;*/
+		Classroom classroom = null;
+		try{
+			ObjectInputStream entree = new ObjectInputStream( new FileInputStream(String.valueOf(filePath)));
+			classroom = (Classroom) entree.readObject();
+			entree.close(); }
+
+		catch(Exception e){ e.printStackTrace(); }
+
 		return classroom;
 	}
 
@@ -94,16 +108,14 @@ public class Exercise2 {
 
 		Path filePath = Paths.get("classroom.ser");
 
-		Classroom classroom2 = load (filePath);
-
-		classroom2.toString();
-
-		System.out.println("Bonjour 2");
+		save(classroom,filePath);
 
 		System.out.printf("Classroom saved to %s, size=%d bytes\n", filePath.toString(), Files.size(filePath));
 
 		Classroom loadedClassroom = load(filePath);
 
 		System.out.printf("Classroom loaded from %s: %s\n", filePath.toString(), loadedClassroom.toString());
+
+		loadedClassroom.toString();
 	}
 }
